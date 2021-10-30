@@ -1,34 +1,45 @@
 (ns link.visitor
-  (:import LinkVisitor
-           LinkParser$PipeOperContext
-           LinkParser$OperPipeContext
-           LinkParser$ArrayContext
-           LinkParser$EmptyArrayContext
-           LinkParser$StreamContext
-           LinkParser$EmptyStreamContext
-           LinkParser$ObjectContext
-           LinkParser$EmptyObjectContext
-           LinkParser$ExprOperContext
-           LinkParser$IdContext
-           LinkParser$IfContext
-           LinkParser$StringContext
-           LinkParser$IntContext
-           LinkParser$FloatContext
-           LinkParser$ApplyContext
-           LinkParser$SubExprContext
-           LinkParser$ApplyExprContext
-           LinkParser$LambdaContext
-           LinkParser$LetContext
-           LinkParser$FieldContext
-           LinkParser$ConsContext)
+  (:import
+   LinkVisitor
+   LinkParser$PipeOperContext
+   LinkParser$OperPipeContext
+   LinkParser$ArrayContext
+   LinkParser$EmptyArrayContext
+   LinkParser$StreamContext
+   LinkParser$EmptyStreamContext
+   LinkParser$ObjectContext
+   LinkParser$EmptyObjectContext
+   LinkParser$ExprOperContext
+   LinkParser$IdContext
+   LinkParser$IfContext
+   LinkParser$StringContext
+   LinkParser$IntContext
+   LinkParser$FloatContext
+   LinkParser$ApplyContext
+   LinkParser$SubExprContext
+   LinkParser$ApplyExprContext
+   LinkParser$LambdaContext
+   LinkParser$LetContext
+   LinkParser$FieldContext
+   LinkParser$ConsContext)
   (:gen-class))
 
 (defn id-symbol [id]
   (symbol (.getText id)))
 
-(defn get-str [x]
+(defn parse-str [x]
   (let [s (.getText x)]
     (subs s 1 (- (count s) 1))))
+
+(defn curry [args body]
+  (if (empty? args)
+    body
+    (curry (butlast args) (list 'fn [(last args)] body))))
+
+(defn app [f args]
+  (if (empty? args)
+    f
+    (app (list f (first args)) (rest args))))
 
 (defn visitExpr [this ctx]
   (cond
@@ -77,7 +88,7 @@
     (Float/parseFloat (.getText ctx)))
 
   (visitString [this ctx]
-    (get-str ctx))
+    (parse-str ctx))
 
   (visitField [this ctx]
     (.getText ctx))
@@ -86,10 +97,10 @@
     (id-symbol ctx))
 
   (visitApply [this ctx]
-    (apply list (cons (id-symbol (.ID ctx)) (map (partial visitExpr this) (.expr ctx)))))
+    (app (id-symbol (.ID ctx)) (map (partial visitExpr this) (.expr ctx))))
 
   (visitApplyExpr [this ctx]
-    (apply list (cons (visitPipe this (.pipe ctx)) (map (partial visitExpr this) (.expr ctx)))))
+    (app (visitPipe this (.pipe ctx)) (map (partial visitExpr this) (.expr ctx))))
 
   (visitObject [this ctx]
     (apply hash-map (apply concat (map (fn [x] (.visitPair this x)) (.pair ctx)))))
@@ -118,7 +129,7 @@
       (list 'let vars (visitOper this (.oper ctx)))))
 
   (visitLambda [this ctx]
-    (list 'fn (apply vector (map id-symbol (.ID ctx))) (visitOper this (.oper ctx))))
+    (curry (map id-symbol (.ID ctx)) (visitOper this (.oper ctx))))
 
   (visitSubExpr [this ctx]
     (visitPipe this (.pipe ctx)))
@@ -155,20 +166,19 @@
           id (first syms)
           args (apply vector (rest syms))
           body (visitPipe this (.pipe ctx))]
-      [id (if (empty? args) body (list 'fn args body))]))
+      [id (curry args body)]))
 
   (visitPair [this ctx]
     [(if-let [id (.ID ctx)]
        (id-symbol id)
-       (get-str (.STRING ctx)))
+       (parse-str (.STRING ctx)))
      (visitPipe this (.pipe ctx))]))
 
 ;; (defn run []
-;;   (do
-;;     (let [input-stream (org.antlr.v4.runtime.ANTLRFileStream. "../../dev/input")
-;;          lexer (LinkLexer. input-stream)
-;;          stream (org.antlr.v4.runtime.CommonTokenStream. lexer)
-;;          parser (LinkParser. stream)
-;;          tree (.prog parser)
-;;          visitor (Visitor.)]
-;;      (.visitProg visitor tree))))
+;;   (let [input-stream (org.antlr.v4.runtime.ANTLRFileStream. "dev/input")
+;;         lexer (LinkLexer. input-stream)
+;;         stream (org.antlr.v4.runtime.CommonTokenStream. lexer)
+;;         parser (LinkParser. stream)
+;;         tree (.prog parser)
+;;         visitor (Visitor.)]
+;;     (.visitProg visitor tree)))
