@@ -2,17 +2,20 @@
   (:import
    LinkLexer
    LinkParser
-   [org.antlr.v4.runtime ANTLRFileStream CommonTokenStream])
+   [org.antlr.v4.runtime CharStreams CommonTokenStream])
   (:require
    [link.visitor :as vis]
    [clojure.pprint :as pp])
   (:gen-class))
 
-(defn -main [& args]
-  (let [input-stream (ANTLRFileStream. (first args))
+(defn transpile [src]
+  (let [input-stream (CharStreams/fromString src)
         lexer (LinkLexer. input-stream)
         stream (CommonTokenStream. lexer)
         parser (LinkParser. stream)
         tree (.prog parser)
         visitor (vis/->Visitor)]
-    (pp/pprint (.visitProg visitor tree))))
+    (.visitProg visitor tree)))
+
+(defn -main [& args]
+  (pp/pprint (transpile (slurp (first args)))))

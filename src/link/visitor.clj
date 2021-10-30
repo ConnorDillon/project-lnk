@@ -70,16 +70,22 @@
   (cond
     (instance? LinkParser$ExprOperContext ctx) (.visitExprOper this ctx)
     (instance? LinkParser$ConsContext ctx) (.visitCons this ctx)
-    :else (list (id-symbol (.op ctx)) (visitOper this (.oper ctx 0)) (visitOper this (.oper ctx 1)))))
+    :else (let [x (id-symbol (.op ctx))
+                y (visitOper this (.oper ctx 0))
+                z (visitOper this (.oper ctx 1))]
+            (case x
+              == (list '= y z)
+              != (list 'not (list '= y z))
+              (list x y z)))))
 
 (deftype Visitor []
   LinkVisitor
 
   (visitProg [this ctx]
-    (let [f (fn [x] (.visitAssign this x))
-          vars (apply vector (apply concat (map f (.assign ctx))))]
+    (let [f (fn [x] (apply list 'def (.visitAssign this x)))
+          defs (apply list (map f (.assign ctx)))]
       (when-let [p (.pipe ctx)]
-        (list 'let vars (visitPipe this p)))))
+        (apply list 'do (concat defs (list (visitPipe this p)))))))
 
   (visitInt [this ctx]
     (Integer/parseInt (.getText ctx)))
