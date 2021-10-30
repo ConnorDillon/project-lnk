@@ -1,50 +1,46 @@
 grammar Link;		
 
-prog: ((defn | expr | pipe) (';' | EOF))* ;
+prog: (assign (';' | EOF))* pipe? EOF ;
 
-defn: 'def' ID+ '=' (expr | pipe) ;
-
-pipe: expr ('|' expr)* ;
-
-expr: expr op=('*' | '/') expr # MulDiv
-    | expr op=('+' | '-') expr # AddSub
-    | expr op=('>' | '<' | '>=' | '<=' | '==') expr # Compare
-    | 'not' expr # Not
-    | expr op='and' expr # And
-    | expr op='or' expr # Or
-    | 'do' expr (';' expr)* # Do
-    | 'if' expr 'then' expr 'else' expr # If
-    | DOT # Dot
-    | FIELD # Field
-    | ID '=' expr # Assign
-    | ID # Id
-    | ID expr+ # Call
-    | '\\' ID+ '->' expr # Lambda
-    | INT # Int
+expr: INT # Int
     | FLOAT # Float
     | STRING # String
-    | '{' (pair | ID) (',' (pair | ID))* '}' # Object
+    | FIELD # Field
+    | ID # Id
+    | ID expr+ # Apply
+    | '(' pipe ')' expr+ # ApplyExpr
+    | '{' pair (',' pair)* '}' # Object
     | '{' '}' # EmptyObject
-    | '[' expr (',' expr)* ']' # Array
+    | '[' pipe (',' pipe)* ']' # Array
     | '[' ']' # EmptyArray
-    | '(' expr ',' (expr ',')* expr?')' # Stream
+    | '(' ((pipe ',') | (pipe (',' pipe)+)) ')' # Stream
     | '(' ')' # EmptyStream
-    | '(' expr ')' # ExprGroup
-    | '(' pipe ')' # PipeGroup
-    | '(' expr+ ')' # CallGroup
+    | 'if' oper 'then' oper 'else' oper # If
+    | 'let' assign (';' assign)* 'in' oper # Let
+    | '\\' ID+ '->' oper # Lambda
+    | '(' pipe ')' # SubExpr
     ;
 
-pair: (ID | STRING) ':' expr;
+oper: expr # ExprOper
+    | oper op=('*' | '/') oper # MulDiv
+    | oper op=('+' | '-') oper # AddSub
+    | oper op=('>' | '<' | '>=' | '<=' | '!=' | '==') oper # Compare
+    | oper op='and' oper # And
+    | oper op='or' oper # Or
+    | oper op=':' oper # Cons
+    ;
+
+pipe: oper # OperPipe
+    | pipe op='|' pipe # PipeOper
+    ;
+
+assign: ID+ '=' pipe ;
+
+pair: (ID | STRING) ':' pipe;
 
 ID: [a-zA-Z] [a-zA-Z\-_0-9]* ;
 
-DOT: '.' ;
-
-FIELD: ((ID ACCESS) | (DOT BRACKET_ACCESS)) ACCESS* ;
-
-fragment BRACKET_ACCESS: '[' (STRING | INT) ']';
-
-fragment ACCESS: BRACKET_ACCESS | ('.' ID);
+FIELD: ID (('[' (STRING | INT) ']') | ('.' ID))+ ;
 
 STRING: '"' (ESC | ~["\\])* '"' ;
 
