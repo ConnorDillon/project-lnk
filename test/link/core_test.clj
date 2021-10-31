@@ -1,6 +1,6 @@
 (ns link.core-test
   (:require [clojure.test :refer :all]
-            [link.core :refer :all]))
+            [link.transpile :use transpile]))
 
 (deftest math-test
   (is (= (eval (transpile "1 + 1")) 2))

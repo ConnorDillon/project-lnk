@@ -1,6 +1,9 @@
-(ns link.visitor
+(ns link.transpile
   (:import
+   [org.antlr.v4.runtime CharStreams CommonTokenStream]
+   LinkLexer
    LinkVisitor
+   LinkParser
    LinkParser$PipeOperContext
    LinkParser$OperPipeContext
    LinkParser$ArrayContext
@@ -180,11 +183,11 @@
        (parse-str (.STRING ctx)))
      (visitPipe this (.pipe ctx))]))
 
-;; (defn run []
-;;   (let [input-stream (org.antlr.v4.runtime.ANTLRFileStream. "dev/input")
-;;         lexer (LinkLexer. input-stream)
-;;         stream (org.antlr.v4.runtime.CommonTokenStream. lexer)
-;;         parser (LinkParser. stream)
-;;         tree (.prog parser)
-;;         visitor (Visitor.)]
-;;     (.visitProg visitor tree)))
+(defn transpile [src]
+  (let [input-stream (CharStreams/fromString src)
+        lexer (LinkLexer. input-stream)
+        stream (CommonTokenStream. lexer)
+        parser (LinkParser. stream)
+        tree (.prog parser)
+        visitor (->Visitor)]
+    (.visitProg visitor tree)))
