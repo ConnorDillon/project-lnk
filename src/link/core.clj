@@ -1,8 +1,6 @@
 (ns link.core
-  (:require
-   [link.transpile :use transpile]
-   [clojure.pprint :as pp])
+  (:require [link.interpret :use interpret])
   (:gen-class))
 
 (defn -main [& args]
-  (pp/pprint (transpile (slurp (first args)))))
+  (println (interpret (slurp (first args)))))
