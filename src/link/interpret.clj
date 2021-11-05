@@ -3,8 +3,7 @@
 
 (defn interpret [src]
   (let [keep
-        #{'defn
-          'eval
+        #{'eval
           '+
           '-
           '*

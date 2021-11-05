@@ -58,6 +58,13 @@ public interface LinkVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitApply(LinkParser.ApplyContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code SubExpr}
+	 * labeled alternative in {@link LinkParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSubExpr(LinkParser.SubExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code ApplyExpr}
 	 * labeled alternative in {@link LinkParser#expr}.
 	 * @param ctx the parse tree
@@ -127,13 +134,6 @@ public interface LinkVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLambda(LinkParser.LambdaContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code SubExpr}
-	 * labeled alternative in {@link LinkParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSubExpr(LinkParser.SubExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Cons}
 	 * labeled alternative in {@link LinkParser#oper}.

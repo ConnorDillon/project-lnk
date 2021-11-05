@@ -22,3 +22,8 @@
              inc x = x + 1;
              map inc [1, 2, 3]"]
     (is (= (apply vector (interpret src)) [2 3 4]))))
+
+(deftest lambda-test
+  (is (= (interpret "(\\x y. x + y) 1 1") 2))
+  (is (= (interpret "f g = g 1; f \\x. x + 1") 2))
+  (is (= (interpret "f g x = g x; f (\\x. x + 1) 1") 2)))

@@ -8,6 +8,7 @@ expr: INT # Int
     | FIELD # Field
     | ID # Id
     | ID expr+ # Apply
+    | '(' pipe ')' # SubExpr
     | '(' pipe ')' expr+ # ApplyExpr
     | '{' pair (',' pair)* '}' # Object
     | '{' '}' # EmptyObject
@@ -17,8 +18,7 @@ expr: INT # Int
     | '(' ')' # EmptyStream
     | 'if' oper 'then' oper 'else' oper # If
     | 'let' assign (';' assign)* 'in' oper # Let
-    | '\\' ID+ '->' oper # Lambda
-    | '(' pipe ')' # SubExpr
+    | '\\' ID+ '.' oper # Lambda
     ;
 
 oper: expr # ExprOper
