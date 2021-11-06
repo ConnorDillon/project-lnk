@@ -1,7 +1,5 @@
 (ns link.interpret
-  (:require
-   [clojure.data.json :as json]
-   [link.transpile :as t]))
+  (:require [link.transpile :as t]))
 
 (defn input [kind]
   (when (= kind "lines")

@@ -100,7 +100,17 @@
     (parse-str ctx))
 
   (visitField [this ctx]
-    (.getText ctx))
+    (let [parse (fn [x]
+                  (let [[_ _ str-part int-part id-part] x]
+                    (cond
+                      str-part str-part
+                      id-part id-part
+                      int-part (Integer/parseInt int-part))))
+          parts (->>
+                 (.getText ctx)
+                 (re-seq #"(\"([^\.\[]+)\")|([0-9]+)|([a-z0-9]+)")
+                 (map parse))]
+      (list get-in (symbol (first parts)) (apply vector (rest parts)))))
 
   (visitId [this ctx]
     (id-symbol ctx))
@@ -179,7 +189,7 @@
 
   (visitPair [this ctx]
     [(if-let [id (.ID ctx)]
-       (id-symbol id)
+       (.getText id)
        (parse-str (.STRING ctx)))
      (visitPipe this (.pipe ctx))]))
 

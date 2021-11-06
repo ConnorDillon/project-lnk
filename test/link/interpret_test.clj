@@ -27,3 +27,8 @@
   (is (= (interpret "(\\x y. x + y) 1 1") 2))
   (is (= (interpret "f g = g 1; f \\x. x + 1") 2))
   (is (= (interpret "f g x = g x; f (\\x. x + 1) 1") 2)))
+
+(deftest field-test
+  (is (= (interpret "foo = {bar: 1}; foo.bar") 1))
+  (is (= (interpret "foo = [0, 1]; foo[1]") 1))
+  (is (= (interpret "foo = {bar: [{\"baz\": 1}]}; foo[\"bar\"][0].baz") 1)))
