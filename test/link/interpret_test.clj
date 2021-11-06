@@ -18,7 +18,7 @@
 (deftest map-test
   (let [src "map f x = if empty x
                then x
-               else f (head x) : map f (tail x);
+               else f (head x) & map f (tail x);
              inc x = x + 1;
              map inc [1, 2, 3]"]
     (is (= (apply vector (interpret src)) [2 3 4]))))

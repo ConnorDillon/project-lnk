@@ -1,6 +1,9 @@
 (ns link.core
-  (:require [link.interpret :use interpret])
+  (:require [link.interpret :as i])
   (:gen-class))
 
 (defn -main [& args]
-  (println (interpret (slurp (first args)))))
+  (let [result (i/interpret (slurp (first args)))]
+    (if (seqable? result)
+      (doall (map println result))
+      (println result))))

@@ -4,6 +4,7 @@
   :license {:name "AGPL-3.0"
             :url "https://www.gnu.org/licenses/agpl-3.0.txt"}
   :dependencies [[org.clojure/clojure "1.10.1"]
+                 [org.clojure/data.json "2.4.0"]
                  [org.antlr/antlr4-runtime "4.9.2"]]
   :main ^:skip-aot link.core
   :target-path "target/%s"

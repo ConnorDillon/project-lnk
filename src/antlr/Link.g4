@@ -27,7 +27,7 @@ oper: expr # ExprOper
     | oper op=('>' | '<' | '>=' | '<=' | '!=' | '==') oper # Compare
     | oper op='and' oper # And
     | oper op='or' oper # Or
-    | oper op=':' oper # Cons
+    | oper op='&' oper # Cons
     ;
 
 pipe: oper # OperPipe
