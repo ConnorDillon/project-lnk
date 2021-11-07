@@ -1,19 +1,6 @@
 (ns link.interpret
   (:require [link.transpile :as t]))
 
-(defn input [kind]
-  (when (= kind "lines")
-    (lazy-seq
-     (if-let [l (read-line)]
-       (cons l (input kind))
-       ()))))
-
-(def defs
-  (list
-   'do
-   (list 'def 'lines "lines")
-   (list 'def 'input input)))
-
 (defn env-use []
   (use
    '[clojure.core
@@ -44,13 +31,13 @@
      :only [read-str
             write-str]
      :rename {read-str from_json
-              write-str to_json}]))
+              write-str to_json}]
+   'link.interpret.lib))
 
 (defn interpret [src]
   (let [n (ns-name *ns*)]
     (in-ns 'link.env)
     (env-use)
-    (eval defs)
     (let [result (eval (t/transpile src))]
       (in-ns n)
       result)))

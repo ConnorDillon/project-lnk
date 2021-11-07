@@ -4,6 +4,7 @@
 
 (defn -main [& args]
   (let [result (i/interpret (slurp (first args)))]
-    (if (seqable? result)
-      (doall (map println result))
-      (println result))))
+    (cond
+      (string? result) (println result)
+      (seqable? result) (doall (map println result))
+      :else (println result))))

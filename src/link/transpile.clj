@@ -16,6 +16,7 @@
    LinkParser$IdContext
    LinkParser$IfContext
    LinkParser$StringContext
+   LinkParser$RawStringContext
    LinkParser$IntContext
    LinkParser$FloatContext
    LinkParser$ApplyContext
@@ -25,14 +26,26 @@
    LinkParser$LetContext
    LinkParser$FieldContext
    LinkParser$ConsContext)
+  (:require
+   [clojure.string :as str])
   (:gen-class))
 
 (defn id-symbol [id]
   (symbol (.getText id)))
 
+(defn fix-str [x]
+  (let [s (subs x 1 (- (count x) 1))]
+    (if (= (first x) \")
+      (-> s
+          (str/replace "\\\"" "\"")
+          (str/replace "\\n" "\n")
+          (str/replace "\\r" "\r")
+          (str/replace "\\t" "\t")
+          (str/replace "\\\\" "\\"))
+      (str/replace s "''" "'"))))
+
 (defn parse-str [x]
-  (let [s (.getText x)]
-    (subs s 1 (- (count s) 1))))
+  (fix-str (.getText x)))
 
 (defn curry [args body]
   (if (empty? args)
@@ -49,6 +62,7 @@
     (instance? LinkParser$IntContext ctx) (.visitInt this ctx)
     (instance? LinkParser$FloatContext ctx) (.visitFloat this ctx)
     (instance? LinkParser$StringContext ctx) (.visitString this ctx)
+    (instance? LinkParser$RawStringContext ctx) (.visitRawString this ctx)
     (instance? LinkParser$FieldContext ctx) (.visitField this ctx)
     (instance? LinkParser$IdContext ctx) (.visitId this ctx)
     (instance? LinkParser$ApplyContext ctx) (.visitApply this ctx)
@@ -97,6 +111,9 @@
     (Float/parseFloat (.getText ctx)))
 
   (visitString [this ctx]
+    (parse-str ctx))
+
+  (visitRawString [this ctx]
     (parse-str ctx))
 
   (visitField [this ctx]

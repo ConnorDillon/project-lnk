@@ -37,6 +37,13 @@ public interface LinkVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitString(LinkParser.StringContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code RawString}
+	 * labeled alternative in {@link LinkParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRawString(LinkParser.RawStringContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code Field}
 	 * labeled alternative in {@link LinkParser#expr}.
 	 * @param ctx the parse tree

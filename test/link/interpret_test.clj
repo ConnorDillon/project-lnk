@@ -32,3 +32,15 @@
   (is (= (interpret "foo = {bar: 1}; foo.bar") 1))
   (is (= (interpret "foo = [0, 1]; foo[1]") 1))
   (is (= (interpret "foo = {bar: [{\"baz\": 1}]}; foo[\"bar\"][0].baz") 1)))
+
+(deftest string-test
+  (is (= (interpret "\"foo\"") "foo"))
+  (is (= (interpret "\"foo\\\"bar\\\"baz\"") "foo\"bar\"baz"))
+  (is (= (interpret "\"foo\\nbar\nbaz
+quux\"") "foo\nbar\nbaz\nquux")))
+
+(deftest raw-string-test
+  (is (= (interpret "'foo'") "foo"))
+  (is (= (interpret "'foo''bar''baz'") "foo'bar'baz"))
+  (is (= (interpret "'foo
+bar'") "foo\nbar")))

@@ -5,6 +5,7 @@ prog: (assign (';' | EOF))* pipe? EOF ;
 expr: INT # Int
     | FLOAT # Float
     | STRING # String
+    | RAW_STRING # RawString
     | FIELD # Field
     | ID # Id
     | ID expr+ # Apply
@@ -42,14 +43,16 @@ ID: [a-zA-Z] [a-zA-Z\-_0-9]* ;
 
 FIELD: ID (('[' (STRING | INT) ']') | ('.' ID))+ ;
 
-STRING: '"' (ESC | ~["\\])* '"' ;
-
-fragment ESC: '\\' (["\\/bfnrt]) ;
-
 FLOAT: INT '.' [0-9]+ ;
 
 INT: '-'? ('0' | [1-9] [0-9]*) ;
 
-COMMENT: ('#' .*? ('\n' | EOF)) -> skip ;
+RAW_STRING: '\'' ( '\'\'' | ~['] )* '\'' ;
+
+STRING: '"' (ESC | ~["\\])* '"' ;
+
+fragment ESC: '\\' (["\\/bfnrt]) ;
 
 WS: [ \r\n\t]+ -> skip ;
+
+COMMENT: ('#' .*? ('\n' | EOF)) -> skip ;
