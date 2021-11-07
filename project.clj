@@ -1,6 +1,6 @@
 (defproject link "0.1.0-SNAPSHOT"
   :description "Prototype data processing DSL and engine"
-  :url "https://github.com/ConnorDillon/project-lnk"
+  :url "https://github.com/ConnorDillon/project-link"
   :license {:name "AGPL-3.0"
             :url "https://www.gnu.org/licenses/agpl-3.0.txt"}
   :dependencies [[org.clojure/clojure "1.10.1"]
