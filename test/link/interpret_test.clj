@@ -18,7 +18,7 @@
 (deftest map-test
   (let [src "map f x = if empty x
                then x
-               else f (head x) & map f (tail x);
+               else f (head x) :: map f (tail x);
              inc x = x + 1;
              map inc [1, 2, 3]"]
     (is (= (apply vector (interpret src)) [2 3 4]))))
@@ -30,8 +30,8 @@
 
 (deftest field-test
   (is (= (interpret "foo = {bar: 1}; foo.bar") 1))
-  (is (= (interpret "foo = [0, 1]; foo[1]") 1))
-  (is (= (interpret "foo = {bar: [{\"baz\": 1}]}; foo[\"bar\"][0].baz") 1)))
+  (is (= (interpret "foo = [0, 1]; foo.1") 1))
+  (is (= (interpret "foo = {bar: [{\"baz\": 1}]}; foo.\"bar\".(1 - 1).baz") 1)))
 
 (deftest string-test
   (is (= (interpret "\"foo\"") "foo"))

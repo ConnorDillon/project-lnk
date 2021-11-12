@@ -1,5 +1,5 @@
 (ns link.interpret.lib
-  (:refer-clojure :exclude [format replace find])
+  (:refer-clojure :exclude [format replace])
   (:require
    [clojure.string :as str]
    [link.interpret.lib.private :as priv]))

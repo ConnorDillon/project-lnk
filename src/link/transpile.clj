@@ -13,6 +13,7 @@
    LinkParser$ObjectContext
    LinkParser$EmptyObjectContext
    LinkParser$ExprOperContext
+   LinkParser$DotContext
    LinkParser$IdContext
    LinkParser$IfContext
    LinkParser$StringContext
@@ -24,7 +25,6 @@
    LinkParser$ApplyExprContext
    LinkParser$LambdaContext
    LinkParser$LetContext
-   LinkParser$FieldContext
    LinkParser$ConsContext)
   (:require
    [clojure.string :as str])
@@ -63,7 +63,7 @@
     (instance? LinkParser$FloatContext ctx) (.visitFloat this ctx)
     (instance? LinkParser$StringContext ctx) (.visitString this ctx)
     (instance? LinkParser$RawStringContext ctx) (.visitRawString this ctx)
-    (instance? LinkParser$FieldContext ctx) (.visitField this ctx)
+    (instance? LinkParser$DotContext ctx) (.visitDot this ctx)
     (instance? LinkParser$IdContext ctx) (.visitId this ctx)
     (instance? LinkParser$ApplyContext ctx) (.visitApply this ctx)
     (instance? LinkParser$ApplyExprContext ctx) (.visitApplyExpr this ctx)
@@ -116,18 +116,14 @@
   (visitRawString [this ctx]
     (parse-str ctx))
 
-  (visitField [this ctx]
-    (let [parse (fn [x]
-                  (let [[_ _ str-part int-part id-part] x]
-                    (cond
-                      str-part str-part
-                      id-part id-part
-                      int-part (Integer/parseInt int-part))))
-          parts (->>
-                 (.getText ctx)
-                 (re-seq #"(\"([^\.\[]+)\")|([0-9]+)|([a-z0-9]+)")
-                 (map parse))]
-      (list get-in (symbol (first parts)) (apply vector (rest parts)))))
+  (visitDot [this ctx]
+    (let [e1 (.expr ctx 1)]
+      (list
+       get
+       (visitExpr this (.expr ctx 0))
+       (if (instance? LinkParser$IdContext e1)
+         (.getText e1)
+         (visitExpr this e1)))))
 
   (visitId [this ctx]
     (id-symbol ctx))

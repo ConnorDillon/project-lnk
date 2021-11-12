@@ -16,26 +16,12 @@ public interface LinkVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitProg(LinkParser.ProgContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code Int}
+	 * Visit a parse tree produced by the {@code EmptyStream}
 	 * labeled alternative in {@link LinkParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitInt(LinkParser.IntContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Float}
-	 * labeled alternative in {@link LinkParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFloat(LinkParser.FloatContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code String}
-	 * labeled alternative in {@link LinkParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitString(LinkParser.StringContext ctx);
+	T visitEmptyStream(LinkParser.EmptyStreamContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code RawString}
 	 * labeled alternative in {@link LinkParser#expr}.
@@ -44,19 +30,12 @@ public interface LinkVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitRawString(LinkParser.RawStringContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code Field}
+	 * Visit a parse tree produced by the {@code EmptyArray}
 	 * labeled alternative in {@link LinkParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitField(LinkParser.FieldContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Id}
-	 * labeled alternative in {@link LinkParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitId(LinkParser.IdContext ctx);
+	T visitEmptyArray(LinkParser.EmptyArrayContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Apply}
 	 * labeled alternative in {@link LinkParser#expr}.
@@ -72,26 +51,33 @@ public interface LinkVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSubExpr(LinkParser.SubExprContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code Dot}
+	 * labeled alternative in {@link LinkParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDot(LinkParser.DotContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code String}
+	 * labeled alternative in {@link LinkParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitString(LinkParser.StringContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Int}
+	 * labeled alternative in {@link LinkParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInt(LinkParser.IntContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code ApplyExpr}
 	 * labeled alternative in {@link LinkParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitApplyExpr(LinkParser.ApplyExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Object}
-	 * labeled alternative in {@link LinkParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitObject(LinkParser.ObjectContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code EmptyObject}
-	 * labeled alternative in {@link LinkParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEmptyObject(LinkParser.EmptyObjectContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Array}
 	 * labeled alternative in {@link LinkParser#expr}.
@@ -100,12 +86,26 @@ public interface LinkVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitArray(LinkParser.ArrayContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code EmptyArray}
+	 * Visit a parse tree produced by the {@code Float}
 	 * labeled alternative in {@link LinkParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitEmptyArray(LinkParser.EmptyArrayContext ctx);
+	T visitFloat(LinkParser.FloatContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code EmptyObject}
+	 * labeled alternative in {@link LinkParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEmptyObject(LinkParser.EmptyObjectContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Object}
+	 * labeled alternative in {@link LinkParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitObject(LinkParser.ObjectContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Stream}
 	 * labeled alternative in {@link LinkParser#expr}.
@@ -114,12 +114,19 @@ public interface LinkVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStream(LinkParser.StreamContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code EmptyStream}
+	 * Visit a parse tree produced by the {@code Let}
 	 * labeled alternative in {@link LinkParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitEmptyStream(LinkParser.EmptyStreamContext ctx);
+	T visitLet(LinkParser.LetContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Id}
+	 * labeled alternative in {@link LinkParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitId(LinkParser.IdContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code If}
 	 * labeled alternative in {@link LinkParser#expr}.
@@ -127,13 +134,6 @@ public interface LinkVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIf(LinkParser.IfContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Let}
-	 * labeled alternative in {@link LinkParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLet(LinkParser.LetContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Lambda}
 	 * labeled alternative in {@link LinkParser#expr}.

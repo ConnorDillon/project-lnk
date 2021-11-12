@@ -1,5 +1,5 @@
 (ns link.interpret.lib-test
-  (:refer-clojure :exclude [format replace find])
+  (:refer-clojure :exclude [format replace])
   (:require
    [clojure.test :refer :all]
    [link.interpret.lib :refer :all]))
