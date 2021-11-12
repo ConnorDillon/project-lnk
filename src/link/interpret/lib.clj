@@ -1,6 +1,8 @@
 (ns link.interpret.lib
   (:refer-clojure :exclude [format replace find])
-  (:require [clojure.string :as str]))
+  (:require
+   [clojure.string :as str]
+   [link.interpret.lib.private :as priv]))
 
 (def lines "lines")
 
@@ -18,17 +20,25 @@
 (defn match [pattern]
   (let [p (re-pattern pattern)]
     (fn [string]
-      (re-matches p string))))
-
-(defn find [pattern]
-  (let [p (re-pattern pattern)]
-    (fn [string]
       (re-find p string))))
 
-(defn find_all [pattern]
+(defn match_all [pattern]
   (let [p (re-pattern pattern)]
     (fn [string]
       (re-seq p string))))
+
+(defn capture [pattern]
+  (let [[p n] (priv/pattern-names pattern)]
+    (fn [string]
+      (let [m (re-matcher p string)]
+        (when (.find m)
+          (priv/get-named-group m n))))))
+
+(defn capture_all [pattern]
+  (let [[p n] (priv/pattern-names pattern)]
+    (fn [string]
+      (let [m (re-matcher p string)]
+        (priv/get-named-groups m n)))))
 
 (defn replace [pattern]
   (let [p (re-pattern pattern)]
