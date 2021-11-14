@@ -1,0 +1,72 @@
+id x = x;
+
+map f x = if empty x
+  then null
+  else f (head x) :: map f (tail x);
+
+filter f x = if empty x
+  then null
+  else let
+    h = head x;
+    t = tail x
+    in if f h
+      then h :: t
+      else t;
+
+flatten x = if empty x
+  then null
+  else let
+    h = head x;
+    t = tail x
+    in if empty h
+      then t
+      else head h :: flatten (tail h :: t);
+
+flat_map f x = x | map f | flatten;
+
+filter_map f x = x | map f | filter id;
+
+concat x y = if empty x
+  then y
+  else head x :: concat (tail x) y;
+
+drop c x = if c <= 0
+  then x
+  else if empty x
+    then x
+    else drop (c - 1) (tail x);
+
+take c x = if c <= 0
+  then null
+  else if empty x
+    then null
+    else head x :: take (c - 1) (tail x);
+
+reduce f r x = if empty x
+  then r
+  else reduce f (f (head x) r) (tail x);
+
+group_by f = reduce (\x. update (f x) (cons x)) {};
+
+correlate' state gc-count gc-trigger gc key f x = if empty x
+  then null
+  else let
+    cnt = if gc-count >= gc-trigger
+      then 0
+      else gc-count + 1;
+    next s = correlate' s cnt gc-trigger gc key f (tail x);
+    h = head x;
+    new_state = if cnt == 0
+      then (state | map (update 1 (gc h)) | filter (get 1) | into Map)
+      else state;
+    k = key h;
+    in if k
+      then let
+        result = f h (gc h state.(k);
+        final_state = if result.1
+	  then set k result.1 state
+	  else del k state
+        in h :: concat result.0 (next final_state)
+      else h :: next state;
+
+correlate = correlate' {} 0;
